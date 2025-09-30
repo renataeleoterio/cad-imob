@@ -1,22 +1,33 @@
+<template>
+  <AppLayout> 
+  <div class="dashboard-container">
+  <v-card>
+    <v-card-text>
+      <h1 class="text-base">Bem vindo ao painel de controle do Cadastro Imobiliário</h1>
+
+    <v-alert type="info">
+      <p>Selecione uma opção no menu lateral</p>
+    </v-alert>
+    </v-card-text>
+  </v-card>
+  </div>
+  </AppLayout>
+  </template>
+
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import AppLayout from '@/Layouts/AppLayout.vue';
 </script>
 
-<template>
-    <Head title="Dashboard" />
+<style scoped> 
+.dashboard-container {
+  padding: 20px;
+  background-color: #fffefe;
+}
 
-    <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>
-        </template>
+.v-card {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">You're logged in!</div>
-                </div>
-            </div>
-        </div>
-    </AuthenticatedLayout>
-</template>
+</style>
