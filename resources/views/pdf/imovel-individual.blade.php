@@ -5,8 +5,8 @@
     <title>Relatório Individual</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; font-size: 12px; }
-        .header { text-align: center; margin-bottom: 25px; padding-bottom: 15px; }
-        .logo { max-width: 150px; margin-bottom: 10px; }
+        .header { text-align: center; margin-bottom: 25px; padding-bottom: 15px;  }
+        .logo { max-width: 100px; margin-bottom: 10px;  max-height: 80px; }
         .empresa-nome { font-size: 24px; font-weight: bold; margin: 10px 0; }
         .subtitulo { font-size: 14px; color: #666; margin-bottom: 20px; }
         .info-section { margin: 20px 0; }
@@ -23,7 +23,7 @@
 </head>
 <body>
     <div class="header">
-        <img src="img/logo.png" class="logo" alt="Logo">
+        <img src="{{ public_path('storage/images/logo.png') }}" class="logo" alt="Logo">
         <div class="empresa-nome">Prefeitura Municipal de São Leopoldo</div>
         <div class="subtitulo">RELATÓRIO DETALHADO DE IMÓVEL</div>
     </div>

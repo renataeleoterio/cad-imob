@@ -6,7 +6,7 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; font-size: 10px;}
         .header { text-align: center; margin-bottom: 20px; }
-        .logo { max-width: 150px; margin-bottom: 10px; }
+        .logo { max-width: 100px; max-height: 80px;  margin-bottom: 10px; }
         .empresa-nome { font-size: 24px; font-weight: bold; margin: 10px 0; }
         .subtitulo { font-size: 16px; color: #666; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: fixed; word-wrap: break-word; }
@@ -17,7 +17,7 @@
 </head>
 <body>
     <div class="header">
-        <img src="img/logo.png" class="logo" alt="Logo">
+        <img src="{{ public_path('storage/images/logo.png') }}" class="logo" alt="Logo">
         <div class="empresa-nome">Prefeitura Municipal de São Leopoldo</div>
         <div class="subtitulo">Relatório Geral de Imóveis Cadastrados</div>
     </div>
