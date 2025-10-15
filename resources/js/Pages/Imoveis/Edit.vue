@@ -191,7 +191,7 @@
             </v-card-text>
 
             <Averbacoes
-            :imovel-id="imovel.id"
+            :imovel="imovel"
             :averbacoes="averbacoes"
             :situacao-imovel="imovel.situacao"
             />

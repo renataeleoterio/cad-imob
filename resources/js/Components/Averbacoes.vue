@@ -131,7 +131,7 @@
             <v-btn 
               icon 
               variant="text"
-              @click="emit('delete', averbacao)"
+              @click="deleteAverbacao(averbacao)"
               :loading="deleteLoading === averbacao.id"
               size="small"
             >
@@ -164,8 +164,8 @@ import { computed, ref, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
-  imovelId: {
-    type: [String, Number],
+  imovel: {
+    type: Object,
     required: true
   },
   averbacoes: {
@@ -180,7 +180,8 @@ const props = defineProps({
     type: Boolean,
     default: false
   }
-});
+})
+
 
 const totalAverbacoes = computed(() => props.averbacoes.length);
 
@@ -244,6 +245,29 @@ const podeAdicionar = computed(() => {
   return true;
 });
 
+const deleteAverbacao = (averbacao) => {
+    if (!confirm('Tem certeza que deseja excluir esta averbação?')) {
+        return;
+    }
+    
+    deleteLoading.value = averbacao.id;
+    
+    router.delete(route('imoveis.averbacoes.destroy', {
+        imovel: props.imovel.id,
+        averbacao: averbacao.id
+    }), {
+        preserveScroll: true,
+        onSuccess: () => {
+            // Sucesso
+        },
+        onError: () => {
+            alert('Erro ao excluir averbação');
+        },
+        onFinish: () => {
+            deleteLoading.value = null;
+        }
+    })
+}
 
 function onEventoChange() {
   // limpar medida quando mudar o evento
@@ -260,7 +284,7 @@ function submit() {
   errors.value = {};
   
  
-   router.post(route('imoveis.averbacoes.store', props.imovelId), form.value, {
+   router.post(route('imoveis.averbacoes.store', props.imovel), form.value, {
     preserveScroll: true,
     onSuccess: () => {
       form.value = { evento: '', medida: null, descricao: '' };
@@ -282,7 +306,7 @@ function excluirAverbacao() {
   deleteLoading.value = true;
   
   router.delete(
-    route('imoveis.averbacoes.destroy', [props.imovelId, averbacaoParaExcluir.value.id]),
+    route('imoveis.averbacoes.destroy', [props.imovel, averbacaoParaExcluir.value.id]),
     {
       preserveScroll: true,
       onSuccess: () => {
