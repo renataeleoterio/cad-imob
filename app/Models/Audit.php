@@ -10,6 +10,7 @@ class Audit extends Model
 {
     use HasFactory;
 
+    
     protected $fillable = [
         'user_type',
         'user_id',
@@ -65,7 +66,7 @@ class Audit extends Model
     {
         return match($this->auditable_type) {
             'App\\Models\\Imovel' => 'Imóveis',
-            'App\\Models\\Contribuinte' => 'Contribuintes',
+            'App\\Models\\Pessoa' => 'Contribuintes',
             'App\\Models\\Averbacao' => 'Averbações',
             'App\\Models\\User' => 'Usuários',
             default => class_basename($this->auditable_type),
