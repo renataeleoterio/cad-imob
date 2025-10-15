@@ -11,7 +11,22 @@
       </v-btn>
     </v-card-title>
 
-    
+    <v-alert
+          v-if="$page.props.flash?.success"
+          type="success"
+          class="mb-4"
+        >
+          {{ $page.props.flash.success }}
+        </v-alert>
+
+        <v-alert
+          v-if="$page.props.flash?.error"
+          type="error"
+          class="mb-4"
+        >
+          {{ $page.props.flash.error }}
+        </v-alert>
+
     <v-form @submit.prevent="submitForm">
       <v-row>
         <v-col cols="12" md="6">
@@ -118,6 +133,10 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  flash: {
+    type: Object,
+    default: () => ({})
+  }
 })
 
 
@@ -155,8 +174,16 @@ const dataMaxima = computed(() => {
 const submitForm = () => {
   if (isEditing.value) {
     if (!confirm('Tem certeza que deseja atualizar este cadastro?')) return
+    
     form.put(route('pessoas.update', props.pessoa.id), {
-      onSuccess: () => router.get(route('pessoas.index'))
+      preserveScroll: true,
+      onSuccess: () => {
+        console.log('Pessoa atualizada com sucesso!')
+      },
+      onError: (errors) => {
+        console.log('Erros de validação:', errors)
+
+      }
     })
   } else {
     form.post(route('pessoas.store'), {

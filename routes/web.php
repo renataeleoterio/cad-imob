@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AverbacaoController;
 use App\Http\Controllers\ImovelController;
+use App\Http\Controllers\PDFController;
 use App\Http\Controllers\PessoaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -49,6 +52,18 @@ Route::middleware('auth')->group(function () {
     Route::patch('/imoveis/{imovel}/inativar', [ImovelController::class, 'inativar'])
     ->name('imoveis.inativar');
 
+    Route::post('/imoveis/{imovel}/averbacoes', [AverbacaoController::class, 'store'])
+    ->name('imoveis.averbacoes.store');
+        
+    Route::delete('/imoveis/{imovel}/averbacoes/{averbacao}', [AverbacaoController::class, 'destroy'])
+    ->name('imoveis.averbacoes.destroy');
+
+    Route::get('/pdf/imoveis/geral', [PdfController::class, 'todosImoveis'])->name('pdf.imoveis.geral');
+    Route::get('/pdf/imoveis/{id}/individual', [PdfController::class, 'imovelIndividual'])->name('pdf.imoveis.individual');
+
+    Route::get('/auditoria', [AuditController::class, 'index'])->name('auditoria.index');
+    Route::get('/auditoria/{id}', [AuditController::class, 'show'])->name('auditoria.show');
+
     Route::get('/configuracoes', function () {
     return Inertia::render('Configuracoes/Index');
     })->name('configuracoes.index');
@@ -57,14 +72,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/users', [UserController::class, 'index'])
         // ->middleware('perfil:T,S') // TI e Sistema podem listar
         ->name('users.index');
-
-    // Route::get('/users/create', [UserController::class, 'create'])
-    //     // ->middleware('perfil:T,S')
-    //     ->name('users.create');
-    
-        // Route::post('/users', [UserController::class, 'store'])
-        // ->middleware('perfil:T,S')
-        // ->name('users.store');
 
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])
         // ->middleware('perfil:T,S')

@@ -171,9 +171,11 @@
                 :key="doc.id"
               >
               
-              <template #title>
-                {{  doc.name }}
-              </template>
+              <template #prepend>
+                  <v-icon :color="getFileIcon(doc.name).color" size="large">
+                    {{ getFileIcon(doc.name).icon }}
+                  </v-icon>
+                </template>
 
               
                 <v-btn icon :href="route('imoveis.decoumentos.download', [props.imovel.id], doc.id)">
@@ -187,12 +189,19 @@
               </v-list-item>
               </v-list>
             </v-card-text>
+
+            <Averbacoes
+            :imovel-id="imovel.id"
+            :averbacoes="averbacoes"
+            :situacao-imovel="imovel.situacao"
+            />
       </v-card>
     </v-container>
   </AppLayout>
 </template>
 
 <script setup>
+import Averbacoes from '@/Components/Averbacoes.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { router } from '@inertiajs/vue3';
 import { useForm } from 'laravel-precognition-vue-inertia';
@@ -203,6 +212,7 @@ const props = defineProps({
   pessoas: Array,
   situacoes: Array,
   documentos: Array,
+  averbacoes: Array,
 })
  
 const novosArquivos = ref([])

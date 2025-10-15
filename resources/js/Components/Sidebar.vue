@@ -45,6 +45,8 @@
       <v-list-item-title>{{ item.title }}</v-list-item-title>
       </Link>
     </v-list>
+
+    
     </v-navigation-drawer>
 </template>
 
@@ -58,6 +60,8 @@ const menuItems = [
   { title: 'Imóveis', route: route('imoveis.index'), icon: 'mdi-home-city-outline', iconSize: '1.4rem' , value: 'imoveis' },
   { title: 'Usuários', route: route('users.index'), icon: 'mdi-card-account-details-outline', iconSize: '1.38rem', value: 'users' },
   { title: 'Configurações', route: route('configuracoes.index'), icon: 'mdi-cog-outline', iconSize: '1.52rem', value: 'configuracoes' },
+  { title: 'Auditoria', route: route('auditoria.index'), icon: 'mdi-shield-account-outline', iconSize: '1.52rem', value: 'auditoria' },
+
 ];
 
 const props = defineProps({

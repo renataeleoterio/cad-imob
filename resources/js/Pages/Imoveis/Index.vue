@@ -30,6 +30,15 @@
         {{ $page.props.flash.error }}
       </v-alert>
 
+      <div class="d-flex gap-2 mb-4">
+        <v-btn color="primary" @click="gerarRelatorioGeral">
+          <v-icon left>mdi-file-pdf</v-icon>
+          Relatório Geral (PDF)
+        </v-btn>      
+      </div>
+
+     
+
       <v-card-text>
         <v-row class="mb-4">
           <v-col cols="12" md="4">
@@ -119,6 +128,13 @@
           >
           <v-icon>mdi-delete</v-icon>
         </v-btn>
+
+        <v-btn icon 
+        size="small"
+        title="Gerar PDF Individual"
+        @click="gerarRelatorioIndividual(item.id)">
+         <v-icon>mdi-file-pdf-box</v-icon>
+        </v-btn>
         </template>
 
         <template #no-data>
@@ -183,6 +199,14 @@ const headers = ref([
   { title: 'Situação', key: 'situacao'},
   { title: 'Ações', key: 'acoes', sortable: false},
 ])
+
+const gerarRelatorioGeral = () => {
+  window.open('/pdf/imoveis/geral', '_blank')
+}
+
+const gerarRelatorioIndividual = (id) => {
+  window.open(`/pdf/imoveis/${id}/individual`, '_blank')
+}
 
 //ordenar e paginar
 const updateOptions = (options) => {

@@ -31,9 +31,18 @@ class PessoaRequest extends FormRequest
             ],
             'data_nascimento' => ['required', 'date'],
             'sexo' => ['required', 'in:Masculino,Feminino,Outro'],
-            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:pessoas'],
+            'email' => ['nullable', 'string', 'email:rfc,dns', 'max:255', 
+            Rule::unique('pessoas', 'email')->ignore($pessoaId)],
             'telefone' => ['nullable', 'string', 'max:15'],
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'cpf' => preg_replace('/\D/', '', $this->cpf),
+            'telefone' => preg_replace('/\D/', '', $this->telefone),
+        ]);
     }
     
 }

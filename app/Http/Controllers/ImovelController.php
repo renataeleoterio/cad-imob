@@ -59,9 +59,11 @@ class ImovelController extends Controller
     }
 
     public function edit(Imovel $imovel) {
+        
         return Inertia::render('Imoveis/Edit', [
-            'imovel' => $imovel,
+            'imovel' => $imovel->load('averbacoes'),
             'pessoas' => Pessoa::all(),
+            'averbacoes' => $imovel->averbacoes,
         ]);
 
         
