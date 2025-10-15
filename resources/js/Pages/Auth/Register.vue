@@ -1,9 +1,76 @@
+<template>
+  <GuestLayout>
+    <Head title="Registrar" />
+
+    <v-container class="d-flex justify-center align-center" style="min-height: 100vh;">
+      <v-card elevation="6" width="400" class="pa-6">
+        <v-card-title class="text-h5 text-center mb-4">
+          Criar Conta
+        </v-card-title>
+
+        <v-form @submit.prevent="submit" class="space-y-4">
+          <v-text-field
+            label="Nome"
+            v-model="form.name"
+            :error-messages="form.errors.name"
+            outlined
+            dense
+            required
+          ></v-text-field>
+
+          <v-text-field
+            label="E-mail"
+            type="email"
+            v-model="form.email"
+            :error-messages="form.errors.email"
+            outlined
+            dense
+            required
+          ></v-text-field>
+
+          <v-text-field
+            label="Senha"
+            type="password"
+            v-model="form.password"
+            :error-messages="form.errors.password"
+            outlined
+            dense
+            required
+          ></v-text-field>
+
+          <v-text-field
+            label="Confirmar Senha"
+            type="password"
+            v-model="form.password_confirmation"
+            :error-messages="form.errors.password_confirmation"
+            outlined
+            dense
+            required
+          ></v-text-field>
+
+          <div class="d-flex justify-space-between align-center mt-6">
+            <Link :href="route('login')" class="text-sm text-indigo-600">
+              Já possui conta?
+            </Link>
+
+            <v-btn
+              color="primary"
+              type="submit"
+              :loading="form.processing"
+              :disabled="form.processing"
+              class="px-6"
+            >
+              Registrar
+            </v-btn>
+          </div>
+        </v-form>
+      </v-card>
+    </v-container>
+  </GuestLayout>
+</template> 
+
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
@@ -19,85 +86,3 @@ const submit = () => {
     });
 };
 </script>
-
-<template>
-    <GuestLayout>
-        <Head title="Register" />
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
-
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    :href="route('login')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Already registered?
-                </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Register
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
-</template>

@@ -21,34 +21,42 @@ class ImovelRequest extends FormRequest
      */
     public function rules(): array
     {
+
+        if ($this->isMethod('GET')) {
+            return $this->filterRules();
+        }
+        
+        return $this->storeUpdateRules();
+    }
+ protected function filterRules(): array
+    {
         return [
-            'tipo' => ['required', 'in:Terreno,Casa,Apartamento'],
-            'area_terreno' => ['nullable', 'numeric', 'min:0', 'regex:/^\d+(\.\d{1,2})?$/'],
-            'area_edificacao' => ['nullable', 'numeric', 'min:0', 'regex:/^\d+(\.\d{1,2})?$/'],
-            'logradouro' => ['required', 'string', 'max:255'],
-            'numero' => ['required', 'string', 'max:20'],
-            'bairro' => ['required', 'string', 'max:255'],
-            'complemento' => ['nullable', 'string', 'max:255'],
-            'contribuinte_id' => ['required', 'exists:pessoas,id'],
-            'situacao' => ['required', 'in:Ativo,Inativo'],
+            'tipo' => 'nullable|string|in:Terreno,Casa,Apartamento',
+            'logradouro' => 'nullable|string|max:255',
+            'numero' => 'nullable|string|max:20',
+            'bairro' => 'nullable|string|max:255',
+            'contribuinte_id' => 'nullable|integer|exists:pessoas,id',
+            'situacao' => 'nullable|string|in:Ativo,Inativo',
+            'page' => 'nullable|integer|min:1',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ];
     }
 
-    public function messages(): array {
+
+    public function messages(): array
+    {
         return [
-            'tipo.required' => 'O campo Tipo é obrigatório.',
-            'tipo.in' => 'O Tipo deve ser Terreno, Casa ou Apartamento.',
-            'area_terreno.numeric' => 'Área do Terreno deve ser um número.',
-            'area_terreno.regex' => 'Área do Terreno deve ter no máximo 2 casas decimais.',
-            'area_edificacao.numeric' => 'Área da Edificação deve ser um número.',
-            'area_edificacao.regex' => 'Área da Edificação deve ter no máximo 2 casas decimais.',
-            'logradouro.required' => 'O Logradouro é obrigatório.',
-            'numero.required' => 'O Número é obrigatório.',
-            'bairro.required' => 'O Bairro é obrigatório.',
-            'contribuinte_id.required' => 'Selecione um contribuinte.',
-            'contribuinte_id.exists' => 'O contribuinte selecionado não existe.',
-            'situacao.required' => 'O campo Situação é obrigatório.',
-            'situacao.in' => 'A Situação deve ser Ativo ou Inativo.',
+            // mensagens para filtros
+            'tipo.in' => 'O tipo deve ser Terreno, Casa ou Apartamento',
+            'contribuinte_id.exists' => 'O contribuinte selecionado não existe',
+            'situacao.in' => 'A situação deve ser Ativo ou Inativo',
+            
+            // mensagens para store/update
+            'tipo.required' => 'O tipo do imóvel é obrigatório',
+            'logradouro.required' => 'O logradouro é obrigatório',
+            'numero.required' => 'O número é obrigatório',
+            'bairro.required' => 'O bairro é obrigatório',
+            'contribuinte_id.required' => 'O contribuinte é obrigatório',
         ];
     }
-}
+    }

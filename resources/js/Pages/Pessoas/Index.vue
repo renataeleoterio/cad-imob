@@ -70,12 +70,12 @@ import { router } from '@inertiajs/vue3';
 import { defineProps, ref } from 'vue';
 
 const headers = ref([
-  { text: 'ID', value: 'id', sortable: true },
-  { text: 'Nome', value: 'nome', sortable: true },
-  { text: 'CPF', value: 'cpf', sortable: false },
-  { text: 'Data de Nascimento', value: 'data_nascimento', sortable: true },
-  { text: 'Sexo', value: 'sexo', sortable: true },
-  { text: 'Ações', value: 'actions', sortable: false },
+  { title: 'ID', key: 'id', sortable: true },
+  { title: 'Nome', key: 'nome', sortable: true },
+  { title: 'CPF', key: 'cpf', sortable: false },
+  { title: 'Data de Nascimento', key: 'data_nascimento', sortable: true },
+  { title: 'Sexo', key: 'sexo', sortable: true },
+  { title: 'Ações', key: 'actions', sortable: false },
 ]);
 
 const props = defineProps({

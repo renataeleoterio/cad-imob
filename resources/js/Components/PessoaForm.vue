@@ -45,6 +45,9 @@
             type="date"
             variant="outlined"
             :error-messages="form.errors.data_nascimento"
+            :max="dataMaxima"
+            hint="A pessoa deve ter pelo menos 18 anos"
+            persistent-hint
           />
         </v-col>
 
@@ -106,7 +109,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useForm, router } from '@inertiajs/vue3'
 import { vMaska } from 'maska/vue'
 
@@ -142,6 +145,12 @@ watch(
     })
   }
 )
+
+const dataMaxima = computed(() => {
+  const data = new Date()
+  data.setFullYear(data.getFullYear() - 18)
+  return data.toISOString().split('T')[0]
+})
 
 const submitForm = () => {
   if (isEditing.value) {

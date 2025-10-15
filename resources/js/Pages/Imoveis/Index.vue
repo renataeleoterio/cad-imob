@@ -11,6 +11,25 @@
           />
       </h3>
 
+        <v-alert
+        v-if="$page.props.flash?.success"
+        type="success"
+        class="mb-4"
+        dismissible
+      >
+        {{ $page.props.flash.success }}
+      </v-alert>
+
+      
+      <v-alert
+        v-if="$page.props.flash?.error"
+        type="error"
+        class="mb-4"
+        dismissible
+      >
+        {{ $page.props.flash.error }}
+      </v-alert>
+
       <v-card-text>
         <v-row class="mb-4">
           <v-col cols="12" md="4">
@@ -36,26 +55,46 @@
             v-model="filters.search"
             label="Buscar por logradouro/bairro"
             clearable
+            @keyup.enter="aplicarFiltros"
             />
           </v-col>
+
+          <v-col cols="12" md="6" class="d-flex align-end gap-2">
+              <v-btn
+                color="secondary"
+                @click="limparFiltros"
+                :disabled="!temFiltrosAtivos"
+              >
+                Limpar Filtros
+              </v-btn>
+              <v-btn
+                color="primary"
+                @click="aplicarFiltros"
+                
+              >
+                Aplicar Filtros
+              </v-btn>
+            </v-col>
         </v-row>
 
-      <v-data-table
+      <v-data-table-server
       :headers="headers"
       :items="imoveis"
+      :items-length="page.props.imoveis.total"
       class="elevation-1"
       item-key="id"
+      @update:options="updateOptions"
       >
         <template #item.contribuinte="{ item }">
-          {{  item.contribuinte?.nome }}
+          {{  item.contribuinte?.nome || '-'}}
         </template>
 
         <template #item.area_terreno="{ item }">
-          {{  item.area_terreno }} m²
+          {{  item.area_terreno ? `${item.area_terreno} m²` : '-' }} m²
         </template>
 
         <template #item.area_edificacao="{ item }">
-          {{ item.area_edificacao ?? '-' }} m²
+          {{ item.area_edificacao ? `${item.area_edificacao} m²` : '-' }} m²
         </template>
 
         <template #item.situacao="{ item }">
@@ -68,7 +107,7 @@
           <v-btn
           icon
           size="small"
-          @click="router.get(route('imoveis.edit', item))"
+          @click="editarImovel(item)"
           >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
@@ -81,7 +120,21 @@
           <v-icon>mdi-delete</v-icon>
         </v-btn>
         </template>
-      </v-data-table>
+
+        <template #no-data>
+            <div class="text-center py-4">
+              <v-icon size="64" class="mb-2">mdi-home-search</v-icon>
+              <div>Nenhum imóvel encontrado</div>
+              <v-btn 
+                color="primary" 
+                class="mt-2"
+                @click="limparFiltros"
+              >
+                Limpar Filtros
+              </v-btn>
+            </div>
+          </template>
+      </v-data-table-server>
 
       <div class="mt-4 flex justify-center">
         <v-pagination
@@ -98,31 +151,31 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 
 
 const page = usePage();
+const imovel = ref(page.props.imovel);
 
 const imoveis = ref(page.props.imoveis?.data ?? [])
 
 const filters = ref({
-  inscricao_municipal: page.props.filters?.inscricao_municipal ?? '',
-  tipo: page.props.filters?.tipo ?? '',
-  logradouro: page.props.filters?.logradouro ?? '',
-  numero: page.props.filters?.numero ?? '',
-  bairro: page.props.filters?.bairro ?? '',
-  contribuinte_id: page.props.filters?.contribuinte_id ?? '',
-  situacao: page.props.filters?.situacao ?? '',
-})
+  tipo: page.props.filters?.tipo || '',
+  logradouro: page.props.filters?.logradouro || '',
+  numero: page.props.filters?.numero || '',
+  bairro: page.props.filters?.bairro || '',
+  contribuinte_id: page.props.filters?.contribuinte_id || '',
+  situacao: page.props.filters?.situacao || '',
+  search: page.props.filters?.search || '',
+});
+
 
 const currentPage = ref(page.props.imoveis.current_page ?? 1)
 
 const headers = ref([
   { title: 'Inscrição', key: 'id'},
   { title: 'Tipo', key: 'tipo'},
-  { title: 'Area do Terreno (m²)', key: 'area_terreno'},
-  { title: 'Area de Edificação', key: 'area_edificacao'},
   { title: 'Logradouro', key: 'logradouro'},
   { title: 'Numero', key: 'numero'},
   { title: 'Bairro', key: 'bairro'},
@@ -131,12 +184,61 @@ const headers = ref([
   { title: 'Ações', key: 'acoes', sortable: false},
 ])
 
+//ordenar e paginar
+const updateOptions = (options) => {
+  currentPage.value = options.page
+}
+
+const loading = ref(false);
+
+const temFiltrosAtivos = computed(() => {
+  return Object.values(filters.value).some(value => 
+    value !== '' && value !== null && value !== undefined
+  );
+});
 
 watch(filters, (newFilters) => {
-  router.get(route('imoveis.index'),
-   { ...newFilters, page: currentPage.value }, 
-   { preserveState: true, replace: true })
-}, { deep: true })
+  setTimeout(() => {
+    aplicarFiltros();
+  }, 500);
+}, { deep: true });
+
+const aplicarFiltros = () => {
+  loading.value = true;
+  currentPage.value = 1;
+  
+  router.get(route('imoveis.index'), 
+    { ...filters.value, page: currentPage.value }, 
+    { 
+      preserveState: false, 
+      replace: true,
+      onSuccess: () => {
+        console.log('Filtros aplicados com sucesso');
+        console.log('Novos dados:', page.props.imoveis);
+      },
+      onFinish: () => {
+        loading.value = false;
+      }
+    }
+  );
+};
+
+const limparFiltros = () => {
+  filters.value = {
+    tipo: '',
+    logradouro: '',
+    numero: '',
+    bairro: '',
+    contribuinte_id: '',
+    situacao: '',
+  };
+  currentPage.value = 1;
+  
+  router.get(route('imoveis.index'), 
+    { page: currentPage.value }, 
+    { preserveState: true, replace: true }
+  );
+};
 
 
 const changePage= (newPage) =>{
@@ -144,20 +246,30 @@ const changePage= (newPage) =>{
   router.get(
     route('imoveis.index'),
     { ...filters.value, page: newPage},
-    { preserveState: true, replace: true }
+    { preserveState: false, replace: true }
   )
 }
 
+const editarImovel = (imovel) => {
+  router.get(route('imoveis.edit', imovel.id))
+}
 
 // inativar imóvel
-const inativarImovel = (id) => {
+const inativarImovel = (imovel) => {
   if (!confirm('Tem certeza que deseja inativar este imóvel?')) {
-    router.delete(route('imoveis.destroy', id), {
+    return;
+  }
+    
+  router.patch(route('imoveis.inativar', imovel.id), {
       onSuccess: () => {
         alert('Imovel inativado com sucesso')
+        router.reload({ preserveScroll: true });
+      },
+      onError: () => {
+        alert('Erro ao inativar imovel.')
       }
     })
   }
-}
+
   
 </script>

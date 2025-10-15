@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ImovelRequest;
+use App\Http\Requests\StoreImovelRequest;
+use App\Http\Requests\UpdateImovelRequest;
+use App\Models\Documento;
 use App\Models\Imovel;
 use App\Models\Pessoa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ImovelController extends Controller
@@ -17,6 +21,18 @@ class ImovelController extends Controller
         if($request->filled('tipo')) {
             $query->where('tipo', $request->tipo);
         };
+
+        if($request->filled('situacao')) {
+            $query->where('situacao', $request->situacao);
+        }; 
+
+        if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('logradouro', 'like', "%{$search}%")
+              ->orWhere('bairro', 'like', "%{$search}%");
+        });
+    }
 
         $imoveis = $query->paginate(10)
         ->appends($request->all());
@@ -35,7 +51,7 @@ class ImovelController extends Controller
             ]);
     }
     
-    public function store(ImovelRequest $request) {
+    public function store(StoreImovelRequest $request) {
         Imovel::create($request->validated());
 
         return redirect()->route('imoveis.index')
@@ -45,11 +61,13 @@ class ImovelController extends Controller
     public function edit(Imovel $imovel) {
         return Inertia::render('Imoveis/Edit', [
             'imovel' => $imovel,
-            'pessoas' => Pessoa::orderBy('nome')->get(),
+            'pessoas' => Pessoa::all(),
         ]);
+
+        
     }
 
-    public function update(ImovelRequest $request, Imovel $imovel) 
+    public function update(UpdateImovelRequest $request, Imovel $imovel) 
     {
         $imovel->update($request->validated());
 
@@ -57,12 +75,49 @@ class ImovelController extends Controller
         ->with('success','Imóvel atualizado com sucesso.');
     }
 
-    public function destroy(Imovel $imovel) {
-        $imovel->update([
-            'situacao' => 'Inativo',
-        ]);
 
-        return redirect()->route('imoveis.index')
-        ->with('success','Imovel inativado com sucesso.');
+    public function inativar(Imovel $imovel) {
+        $imovel->situacao = 'Inativo';
+        $imovel->save();
+
+        return back()->with('success', 'Imovel inativado com sucesso!');
     }
+
+    /**
+     * Upload de documentos
+     */
+
+    public function storeDocumento(Request $request, Imovel $imovel) 
+    {
+        $request->validate([
+            'documentos.*' => 'file|max:3072|mimes:jpg,jpeg,png,pdf',
+        ]);
+    
+        foreach ($request->file('documentos', []) as $file) {
+            $path = $file->store('documentos', 'public');
+
+            $imovel->documentos()->create([
+                'nome' => $file->getClientOriginalName(),
+                'tipo' => $file->getClientOriginalExtension(),
+                'tamanho' => $file->getSize(),
+                'caminho' => $path,
+            ]);
+        }
+
+        return back()->with('success', 'Documentos enviados com sucesso!');
+    }
+
+
+    /**
+     * Excluir documento especifico de um imovel
+     */
+
+    public function destroyDocumento(Imovel $imovel, Documento $documento) 
+    {
+        if ($documento->imovel_id !== $imovel->id) {
+            abort(403, 'Documento não pertence a este imovel.');
+        }
+        return Storage::download($documento->caminho, $documento->nome);
+    }
+
 }

@@ -21,6 +21,7 @@
               v-model="form.area_terreno"
               label="Area do Terreno (m²)"
               inputmode="decimal"
+              type="number"
               :error-messages="form.errors.area_terreno"
               />
             </v-col>
@@ -30,6 +31,7 @@
               v-model="form.area_edificacao"
               label="Area da Edificação (m²)"
               inputmode="decimal"
+              type="number"
               :error-messages="form.errors.area_edificacao"
               />
             </v-col>
@@ -82,14 +84,14 @@
               />
             </v-col>
 
-            <v-col cols="12" md="4">
+            <!-- <v-col cols="12" md="4">
               <v-select
               v-model="form.situacao"
               :items="situacoes"
               label="Situação"
               :error-messages="form.errors.situacao"
               />
-            </v-col>
+            </v-col> -->
 
             <v-col cols="12" md="4">
               <v-btn type="submit" :loading="form.processing" class="mr-2">
@@ -112,6 +114,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { computed } from 'vue';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
   pessoas: Array,

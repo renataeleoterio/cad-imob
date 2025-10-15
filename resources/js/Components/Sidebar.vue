@@ -56,7 +56,7 @@ const menuItems = [
   { title: 'Home', route: route('Home'), icon: 'mdi-home-outline', iconSize: '1.53rem', value: 'home' },
   { title: 'Pessoas', route: route('pessoas.index'), icon: 'mdi-folder-account-outline', iconSize: '1.54rem', value: 'pessoas' },
   { title: 'Imóveis', route: route('imoveis.index'), icon: 'mdi-home-city-outline', iconSize: '1.4rem' , value: 'imoveis' },
-  { title: 'Usuários', route: route('usuarios.index'), icon: 'mdi-card-account-details-outline', iconSize: '1.38rem', value: 'usuarios' },
+  { title: 'Usuários', route: route('users.index'), icon: 'mdi-card-account-details-outline', iconSize: '1.38rem', value: 'users' },
   { title: 'Configurações', route: route('configuracoes.index'), icon: 'mdi-cog-outline', iconSize: '1.52rem', value: 'configuracoes' },
 ];
 
